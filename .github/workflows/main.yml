@@ -60,6 +60,7 @@ jobs:
 
       - name: Set up the test environment.
         run: |
+          cat /tests/config.yml
           cp tests/ansible.cfg ./ansible.cfg
           cp tests/inventory ./inventory
           cp tests/config.yml ./config.yml
