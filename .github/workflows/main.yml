@@ -57,8 +57,9 @@ jobs:
           sudo pip3 install --upgrade pip
           sudo pip3 install ansible
 
-      - name: Set up the test environment.
+      - name: Set uAAAAp the test environment.
         run: |
+          echo "$PWD"
           cat /tests/config.yml
           cp tests/ansible.cfg ./ansible.cfg
           cp tests/inventory ./inventory
