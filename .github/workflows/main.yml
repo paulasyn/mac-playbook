@@ -1,56 +1,80 @@
 ---
-name: Configure host.
-hosts: all
+name: CI
+on:
+  pull_request:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: "0 5 * * 4"
 
-vars_files:
-  - default.config.yml
+jobs:
 
-pre_tasks:
-  - name: Include playbook configuration.
-    include_vars: "{{ item }}"
-    with_fileglob:
-      - "{{ playbook_dir }}/config.yml"
-    tags: ['always']
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
 
-roles:
-  - role: elliotweiser.osx-command-line-tools
-  - role: geerlingguy.mac.homebrew
-    tags: ['homebrew']
-  - role: geerlingguy.dotfiles
-    when: configure_dotfiles
-    tags: ['dotfiles']
-  - role: geerlingguy.mac.mas
-    when: mas_installed_apps or mas_installed_app_ids
-    tags: ['mas']
-  - role: geerlingguy.mac.dock
-    when: configure_dock
-    tags: ['dock']
+      - name: Set up Python 3.
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
 
-tasks:
-  - import_tasks: tasks/sudoers.yml
-    when: configure_sudoers
-    tags: ['sudoers']
+      - name: Install test dependencies.
+        run: pip3 install yamllint ansible ansible-lint
 
-  - import_tasks: tasks/terminal.yml
-    when: configure_terminal
-    tags: ['terminal']
+      - name: Lint code.
+        run: |
+          yamllint .
+          ansible-lint
 
-  - import_tasks: tasks/osx.yml
-    when: configure_osx
-    tags: ['osx']
+  integration:
+    name: Integration
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os:
+          - macos-latest
 
-  - import_tasks: tasks/extra-packages.yml
-    tags: ['extra-packages']
+    steps:
+      - name: Check out the codebase.
+        uses: actions/checkout@v2
 
-  - import_tasks: tasks/sublime-text.yml
-    when: configure_sublime
-    tags: ['sublime-text']
+      - name: Uninstall GitHub Actions' built-in Homebrew.
+        run: tests/uninstall-homebrew.sh
 
-  - name: Run post-provision task files in a block.
-    tags: ['post']
-    block:
-      - name: Run configured post-provision ansible task files.
-        include_tasks: "{{ outer_item }}"
-        loop_control:
-          loop_var: outer_item
-        with_fileglob: "{{ post_provision_tasks | default(omit) }}"
+      - name: Uninstall GitHub Actions' built-in browser installs.
+        run: |
+          sudo rm -rf /Applications/Firefox.app
+          sudo rm -rf /Applications/Google\ Chrome.app
+          sudo rm -rf /usr/local/bin/firefox
+
+      - name: Install test dependencies.
+        run: |
+          sudo pip3 install --upgrade pip
+          sudo pip3 install ansible
+
+      - name: Set up the test environment.
+        run: |
+          cp tests/ansible.cfg ./ansible.cfg
+          cp tests/inventory ./inventory
+          cp tests/config.yml ./config.yml
+          ansible-galaxy install -r requirements.yml
+
+      - name: Test the playbook's syntax.
+        run: ansible-playbook main.yml --syntax-check
+
+      - name: Test the playbook.
+        run: ansible-playbook main.yml
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+
+      - name: Idempotence check.
+        run: |
+          idempotence=$(mktemp)
+          ansible-playbook main.yml | tee -a ${idempotence}
+          tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
