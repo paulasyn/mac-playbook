@@ -50,6 +50,7 @@ jobs:
           sudo rm -rf /opt/homebrew/lib/
           sudo rm -rf /opt/homebrew/share/
           sudo rm -rf /opt/homebrew/var/
+          sudo rm -rf /opt/homebrew/
 
       - name: Uninstall GitHub Actions' built-in browser installs.
         run: |
