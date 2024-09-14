@@ -22,7 +22,7 @@ jobs:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install yamllint ansible ansible-lint
+        run: pipx install yamllint ansible ansible-lint
 
       - name: Lint code.
         run: |
@@ -43,14 +43,7 @@ jobs:
 
       - name: Uninstall GitHub Actions' built-in Homebrew.
         run: |
-          ls -il tests/
           tests/uninstall-homebrew.sh
-          sudo rm -rf /opt/homebrew/bin/
-          sudo rm -rf /opt/homebrew/etc/
-          sudo rm -rf /opt/homebrew/lib/
-          sudo rm -rf /opt/homebrew/share/
-          sudo rm -rf /opt/homebrew/var/
-          sudo rm -rf /opt/homebrew/
 
       - name: Uninstall GitHub Actions' built-in browser installs.
         run: |
@@ -60,8 +53,11 @@ jobs:
 
       - name: Install test dependencies.
         run: |
-          sudo pip3 install --upgrade pip
-          sudo pip3 install ansible
+          # sudo pip3 install --upgrade pip
+          # sudo pip3 install ansible
+          sudo python3 -m pip install --user pipx
+          sudo python3 -m pipx ensurepath
+          sudo python3 -m pipx install ansible
 
       - name: Set up the test environment.
         run: |
