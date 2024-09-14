@@ -67,7 +67,7 @@ jobs:
           cp tests/ansible.cfg ./ansible.cfg
           cp tests/inventory ./inventory
           cp tests/config.yml ./config.yml
-          pip3 run ansible-galaxy install -r requirements.yml
+          ansible-galaxy install -r requirements.yml
 
       - name: Test the playbook's syntax.
         run: pipx runansible-playbook main.yml --syntax-check
