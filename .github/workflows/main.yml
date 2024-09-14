@@ -57,7 +57,7 @@ jobs:
           # sudo pip3 install ansible
           sudo python3 -m pip install --user pipx
           sudo python3 -m pipx ensurepath
-          sudo python3 -m pipx install ansible
+          sudo python3 -m pipx install --include-deps ansible
 
       - name: Set up the test environment.
         run: |
@@ -65,20 +65,20 @@ jobs:
           cp tests/ansible.cfg ./ansible.cfg
           cp tests/inventory ./inventory
           cp tests/config.yml ./config.yml
-          ansible-galaxy install -r requirements.yml
+          pipx run ansible-galaxy install -r requirements.yml
 
       - name: Test the playbook's syntax.
-        run: ansible-playbook main.yml --syntax-check
+        run: pipx runansible-playbook main.yml --syntax-check
 
       - name: Test the playbook.
-        run: ansible-playbook main.yml
+        run: pipx runansible-playbook main.yml
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
       - name: Idempotence check.
         run: |
           idempotence=$(mktemp)
-          ansible-playbook main.yml | tee -a ${idempotence}
+          pipx run ansible-playbook main.yml | tee -a ${idempotence}
           tail ${idempotence} | grep -q 'changed=0.*failed=0' && (echo 'Idempotence test: pass' && exit 0) || (echo 'Idempotence test: fail' && exit 1)
         env:
           ANSIBLE_FORCE_COLOR: '1'
