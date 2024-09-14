@@ -70,10 +70,10 @@ jobs:
           ansible-galaxy install -r requirements.yml
 
       - name: Test the playbook's syntax.
-        run: pipx runansible-playbook main.yml --syntax-check
+        run: ansible-playbook main.yml --syntax-check
 
       - name: Test the playbook.
-        run: pipx runansible-playbook main.yml
+        run: ansible-playbook main.yml
         env:
           ANSIBLE_FORCE_COLOR: '1'
 
