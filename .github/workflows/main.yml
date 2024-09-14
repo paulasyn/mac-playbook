@@ -56,9 +56,9 @@ jobs:
           # sudo pip3 install --upgrade pip
           # sudo pip3 install ansible
           sudo python3 -m pip install --user pipx
-          source ~/.bashrc
-          sudo python3 -m pipx ensurepath --force
+          sudo python3 -m pipx ensurepath --global
           sudo python3 -m pipx install --include-deps ansible
+          source ~/.bashrc
 
       - name: Set up the test environment.
         run: |
