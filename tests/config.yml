@@ -38,23 +38,23 @@ homebrew_cask_apps:
   - name: obsidian
   # - name: cron # don't need this, use mac crontab
 
-mas_installed_apps:
+mas_installed_apps: []
 # dock items
-  - { id: 1499198946, name: "Structured - Daily Planner" }
-# menu bar
-  - { id: 1160435653, name: "AutoMounter" }
-  - { id: 1475387142, name: "Tailscale" }
-  - { id: 1352778147, name: "Bitwarden" }
-  - { id: 905953485, name: "NordVPN" }
-# apps
-  - { id: 360593530, name: "Notability" }
-  - { id: 6443941139, name: "2FAS - Two Factor Authentication Extension" }
-  - { id: 803453959, name: "Slack" }
-  - { id: 497799835, name: "Xcode" }
-  - { id: 899247664, name: "TestFlight" }
-  - { id: 524141863, name: "Jump Desktop (RDP, VNC, Fluid)" }
-  - { id: 524141863, name: "Jump Desktop (RDP, VNC, Fluid)" }
-  - { id: 497799835, name: "Xcode" }
+#   - { id: 1499198946, name: "Structured - Daily Planner" }
+# # menu bar
+#   - { id: 1160435653, name: "AutoMounter" }
+#   - { id: 1475387142, name: "Tailscale" }
+#   - { id: 1352778147, name: "Bitwarden" }
+#   - { id: 905953485, name: "NordVPN" }
+# # apps
+#   - { id: 360593530, name: "Notability" }
+#   - { id: 6443941139, name: "2FAS - Two Factor Authentication Extension" }
+#   - { id: 803453959, name: "Slack" }
+#   - { id: 497799835, name: "Xcode" }
+#   - { id: 899247664, name: "TestFlight" }
+#   - { id: 524141863, name: "Jump Desktop (RDP, VNC, Fluid)" }
+#   - { id: 524141863, name: "Jump Desktop (RDP, VNC, Fluid)" }
+#   - { id: 497799835, name: "Xcode" }
 
 npm_packages:
   - name: npm
